@@ -166,22 +166,8 @@ public:
     }
 };
 
-int main() {
-    int x, y;
-    cin >> x >> y;
-
-    Grid g(x, y, false);
-
-    g.insert(3, 2, true);
-    g.insert(3, 3, true);
-    g.insert(3, 4, true);
-    g.insert(2, 4, true);
-    g.insert(1, 3, true);
-
-    for (int t = 1; t < 25; t++) {
-
+void file(Grid& g, string& name, int x, int y) {
     ofstream fout;
-    string name = "file" + to_string(t) + ".vtk";
     fout.open(name);
     fout << "# vtk DataFile Version 3.0\n";
     fout << "vtk output\n";
@@ -205,8 +191,24 @@ int main() {
     fout << "\n";
     fout << "POINT_DATA " << (x + 1) * (y + 1) << "\n";
     fout.close();
+};
 
-    g.life_step();
+int main() {
+    int x, y;
+    cin >> x >> y;
+
+    Grid g(x, y, false);
+
+    g.insert(3, 2, true);
+    g.insert(3, 3, true);
+    g.insert(3, 4, true);
+    g.insert(2, 4, true);
+    g.insert(1, 3, true);
+
+    for (int t = 1; t < 25; t++) {
+        string name = "file" + to_string(t) + ".vtk";
+        file(g, name, x, y);
+        g.life_step();
     }
     return 0;
 }
