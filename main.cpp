@@ -1,4 +1,5 @@
 #include <iostream>
+#include "Config_Import.h"
 
 class Grid{
     struct Cell{
@@ -51,6 +52,17 @@ public:
         for (int i = 0; i < x_size*y_size; i++) {field[i] = Cell(state);}
     };
 
+    Grid(std::string path) {
+        int* file = Config_Import::file(path);
+        x_size = Config_Import::x_size(file);
+        y_size = Config_Import::y_size(file);
+        bool* data =  Config_Import::data(file);
+        field = new Cell[x_size*y_size];
+        for (int i = 0; i < x_size*y_size; i++) {
+            field[i] = Cell(data[i]);
+        }
+    }
+
     Grid(const Grid &g) {
         for (int i = 0; i < x_size*y_size; i++) {
             field[i] = g.field[i];
@@ -88,20 +100,20 @@ public:
     };
 
     friend std::ostream& operator<<(std::ostream& out, const Grid& g) {
-        for (int i = 0; i < g.x_size*g.y_size; i++) {
-            out << g.field[i].state << " ";
-        }
-        out << std::endl;
-
-//        for (int i = 0; i < g.y_size; i++) {
-//            for (int j = 0; j < g.x_size; j++) {
-//                if (g.field[i*g.x_size + j].state) {out << "@" << " ";}
-//                else {out << "." << " ";}
-//                //out << g.field[i*g.x_size + j].state << " ";
-//            }
-//            out << std::endl;
+//        for (int i = 0; i < g.x_size*g.y_size; i++) {
+//            out << g.field[i].state << " ";
 //        }
 //        out << std::endl;
+
+        for (int i = 0; i < g.y_size; i++) {
+            for (int j = 0; j < g.x_size; j++) {
+                if (g.field[i*g.x_size + j].state) {out << "@" << " ";}
+                else {out << "." << " ";}
+                //out << g.field[i*g.x_size + j].state << " ";
+            }
+            out << std::endl;
+        }
+        out << std::endl;
 
 //        for (int i = 0; i < y_size; i++) {
 //            for (int j = 0; j < x_size; j++) {
@@ -163,17 +175,15 @@ public:
     }
 };
 
+
+
 int main() {
-    Grid g(20, 10, false);
-    //std::cout << g;
 
-    g.insert(3, 2, true);
-    g.insert(3, 3, true);
-    g.insert(3, 4, true);
-    g.insert(2, 4, true);
-    g.insert(1, 3, true);
 
-    for (int i = 0; i < 28; i++) {
+    std::string tmp = "example.txt";
+    Grid g(tmp);
+
+    for (int i = 0; i < 30; i++) {
         std::cout << g;
         g.life_step();
     }
