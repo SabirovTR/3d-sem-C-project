@@ -1,5 +1,6 @@
 #include <iostream>
 #include "Config_Import.h"
+#include "ParaView_Export.h"
 
 class Grid{
     struct Cell{
@@ -99,6 +100,14 @@ public:
         delete [] field;
     };
 
+    int x() {
+        return x_size;
+    };
+
+    int y() {
+        return y_size;
+    }
+
     friend std::ostream& operator<<(std::ostream& out, const Grid& g) {
 //        for (int i = 0; i < g.x_size*g.y_size; i++) {
 //            out << g.field[i].state << " ";
@@ -125,6 +134,14 @@ public:
         out << std::endl;
         return out;
     };
+
+    bool* Grid_Import() {
+        bool* tmp = new bool[x_size*y_size];
+        for (int i = 0; i < x_size*y_size; i++) {
+            tmp[i] = field[i].state;
+        }
+        return tmp;
+    }
 
     void insert(int i, int j, bool state) {
         field[i*x_size + j] = Cell(state);
@@ -175,17 +192,20 @@ public:
     }
 };
 
+class Life {
+private:
+public:
+    static void create(Grid& g, int steps) {
+        for (int step = 0; step < steps; step++) {
+            ParaView_Export::file(g.Grid_Import(), step, g.x(), g.y());
+            g.life_step();
+        }
+    }
+};
 
 
 int main() {
-
-
-    std::string tmp = "example.txt";
-    Grid g(tmp);
-
-    for (int i = 0; i < 30; i++) {
-        std::cout << g;
-        g.life_step();
-    }
+    Grid g("gun.txt");
+    Life::create(g, 500);
     return 0;
 }
